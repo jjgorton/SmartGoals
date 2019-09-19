@@ -5,6 +5,8 @@ exports.up = function(knex) {
 		tbl.string('name', 128).notNullable().unique();
 
 		tbl.text('description');
+
+		tbl.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
 	});
 };
 
