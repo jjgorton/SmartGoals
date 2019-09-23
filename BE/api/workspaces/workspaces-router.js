@@ -5,10 +5,10 @@ const Workspaces = require('./workspaces-model');
 router.post('/', (req, res) => {
 	let workspace = req.body;
 
-	Workspaces.add(workspace)
+	Workspaces.addWorkspace(workspace)
 		.then((new_workspace) => {
 			res.status(201).json({
-				message : new_workspace.name + ' was added'
+				message : new_workspace
 			});
 		})
 		.catch((err) => {
