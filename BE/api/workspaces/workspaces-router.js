@@ -5,15 +5,17 @@ const Workspaces = require('./workspaces-model');
 router.post('/', (req, res) => {
 	let workspace = req.body;
 
-	Workspaces.addWorkspace(workspace)
+	Workspaces.add(workspace)
 		.then((new_workspace) => {
 			res.status(201).json({
-				message : new_workspace
+				message : new_workspace //workspace id from here
 			});
 		})
 		.catch((err) => {
 			res.status(500).json({ message: err.message });
 		});
+
+	//Users_Workspaces.add(workspace)
 });
 
 //development only
