@@ -3,16 +3,23 @@ const router = require('express').Router();
 const Workspaces = require('./workspaces-model');
 const Users_Workspaces = require('../users_workspaces/users_workspaces-model');
 
-router.post('/', (req, res) => {
+router.post('/:user_id', (req, res) => {
 	let workspace = req.body;
 
 	Workspaces.add(workspace)
 		.then((new_workspace) => {
-			res.status(201).json({
-				message : new_workspace //workspace id from here
-			});
 			if (new_workspace.id) {
-				Users_Workspaces.add();
+				const userWorkspaceInfo = {
+					workspace_id : new_workspace.id,
+					user_id      : req.params.user_id,
+					roles        : 'admin'
+				};
+				Users_Workspaces.add(userWorkspaceInfo).then((userWorskspace) => {
+					res.status(201).json({
+						workspace      : new_workspace,
+						userWorskspace
+					});
+				});
 			}
 		})
 		.catch((err) => {
