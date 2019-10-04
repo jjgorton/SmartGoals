@@ -3,9 +3,9 @@ const router = require('express').Router();
 const Workspaces = require('./workspaces-model');
 const Users_Workspaces = require('../users_workspaces/users_workspaces-model');
 
-router.post('/:user_id', (req, res) => {
+router.post('/createWorkspace/:user_id', (req, res) => {
 	let workspace = req.body;
-
+	console.log('create workspace');
 	Workspaces.add(workspace)
 		.then((new_workspace) => {
 			if (new_workspace.id) {
@@ -14,17 +14,30 @@ router.post('/:user_id', (req, res) => {
 					user_id      : req.params.user_id,
 					roles        : 'admin'
 				};
-				Users_Workspaces.add(userWorkspaceInfo).then((userWorskspace) => {
-					res.status(201).json({
-						workspace      : new_workspace,
-						userWorskspace
-					});
-				});
+				Users_Workspaces.add(userWorkspaceInfo)
+					.then((userWorskspace) => {
+						res.status(201).json({
+							workspace      : new_workspace,
+							userWorskspace
+						});
+					})
+					.catch((err) => res.status(500).json({ message: err.message }));
 			}
 		})
 		.catch((err) => {
 			res.status(500).json({ message: err.message });
 		});
+});
+
+//Add user to a Workspace
+router.post('/addUser', (req, res) => {
+	console.log('add user to workspace');
+	const userWorkspaceInfo = req.body;
+	Users_Workspaces.add(userWorkspaceInfo)
+		.then((userWorskspace) => {
+			res.status(201).json({ userWorskspace });
+		})
+		.catch((err) => res.status(500).json({ message: err.message }));
 });
 
 //Get all Users on a Workspace

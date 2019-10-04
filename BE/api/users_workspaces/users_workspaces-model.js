@@ -14,9 +14,9 @@ function findById(id, table) {
 	return db(`${table}`).select('*').where({ id }).first();
 }
 
-function addUser(users_id, workspaces_id) {
-	return;
-}
+// function addUser(users_id, workspaces_id) {
+// 	return db('users_workspaces').insert()
+// }
 
 function listAllUsersOnWorkspace(workspace_id) {
 	return db('users_workspaces')
