@@ -2,7 +2,8 @@ const db = require('../../data/dbConfig');
 
 module.exports = {
 	find,
-	add
+	add,
+	listAllUsersOnWorkspace
 };
 
 function find() {
@@ -11,6 +12,17 @@ function find() {
 
 function findById(id, table) {
 	return db(`${table}`).select('*').where({ id }).first();
+}
+
+function addUser(users_id, workspaces_id) {
+	return;
+}
+
+function listAllUsersOnWorkspace(workspace_id) {
+	return db('users_workspaces')
+		.join('users', { 'users.id': 'users_workspaces.user_id' })
+		.select('username', 'roles')
+		.where({ workspace_id });
 }
 
 function add(userWorkspaceInfo) {

@@ -27,6 +27,21 @@ router.post('/:user_id', (req, res) => {
 		});
 });
 
+//Get all Users on a Workspace
+router.get('/:workspaces_id', (req, res) => {
+	const workspace_id = req.params.workspaces_id;
+
+	Users_Workspaces.listAllUsersOnWorkspace(workspace_id)
+		.then((usersList) => {
+			res.status(200).json({
+				usersList
+			});
+		})
+		.catch((err) => {
+			err.message;
+		});
+});
+
 //development only
 router.get('/', (req, res) => {
 	Workspaces.find()
