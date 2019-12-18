@@ -61,6 +61,8 @@ router.get('/:workspaces_id', (req, res) => {
         });
 });
 
+// TODO: update and delete workspace and user's role
+
 //development only
 router.get('/', (req, res) => {
     Workspaces.find()
