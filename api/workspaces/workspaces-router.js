@@ -39,6 +39,9 @@ router.post('/createWorkspace/:user_id', (req, res) => {
 router.post('/addUser', (req, res) => {
     console.log('add user to workspace');
     const userWorkspaceInfo = req.body;
+
+    //TODO check to see if user and workspace exist
+
     Users_Workspaces.add(userWorkspaceInfo)
         .then(userWorskspace => {
             res.status(201).json({ userWorskspace });
