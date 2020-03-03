@@ -49,8 +49,19 @@ router.post('/addUser', (req, res) => {
         .catch(err => res.status(500).json({ message: err.message }));
 });
 
+// GET all workspaces for a user with user's roles
+router.get('/workspaceList/:user_id', (req, res) => {
+    const user_id = req.params.user_id;
+
+    Users_Workspaces.listAllWorkspacesForUser(user_id)
+        .then(workspaces => {
+            res.status(200).json({ workspaces });
+        })
+        .catch(err => res.status(500).json({ message: err.message }));
+});
+
 //Get all Users on a Workspace
-router.get('/:workspaces_id', (req, res) => {
+router.get('userList/:workspaces_id', (req, res) => {
     const workspace_id = req.params.workspaces_id;
 
     Users_Workspaces.listAllUsersOnWorkspace(workspace_id)

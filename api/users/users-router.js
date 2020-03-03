@@ -32,6 +32,10 @@ router.post('/login', (req, res) => {
                 const token = tokenService.generateToken(user);
                 res.status(200).json({
                     message: `Welcome ${user.username}!`,
+                    user_id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    created_at: user.created_at,
                     token
                 });
             } else {
@@ -63,7 +67,7 @@ router.delete('/:id', authenticate, (req, res) => {
         });
 });
 
-// TODO: UPDATE user info and GET all workspaces for a user with user's roles with authenticate middelware!.
+// TODO: UPDATE user info with authenticate middelware!.
 
 //development only
 router.get('/users-list', (req, res) => {
