@@ -5,7 +5,7 @@ const Users_Workspaces = require('../users_workspaces/users_workspaces-model');
 
 router.post('/createWorkspace/:user_id', (req, res) => {
     let workspace = req.body;
-    console.log('create workspace');
+
     Workspaces.add(workspace)
         .then(new_workspace => {
             if (new_workspace.id) {
@@ -17,8 +17,11 @@ router.post('/createWorkspace/:user_id', (req, res) => {
                 Users_Workspaces.add(userWorkspaceInfo)
                     .then(userWorskspace => {
                         res.status(201).json({
-                            workspace: new_workspace,
-                            userWorskspace
+                            workspace_id: new_workspace.id,
+                            roles: userWorskspace.roles,
+                            name: new_workspace.name,
+                            description: new_workspace.description,
+                            created_at: new_workspace.created_at
                         });
                     })
                     .catch(err =>
@@ -37,7 +40,6 @@ router.post('/createWorkspace/:user_id', (req, res) => {
 
 //Add user to a Workspace
 router.post('/addUser', (req, res) => {
-    console.log('add user to workspace');
     const userWorkspaceInfo = req.body;
 
     //TODO check to see if user and workspace exist
