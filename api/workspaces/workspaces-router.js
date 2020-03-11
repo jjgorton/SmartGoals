@@ -8,6 +8,7 @@ router.post('/createWorkspace/:user_id', (req, res) => {
 
     Workspaces.add(workspace)
         .then(new_workspace => {
+            // 'if/else' not needed here - handle higher up or as middleware
             if (new_workspace.id) {
                 const userWorkspaceInfo = {
                     workspace_id: new_workspace.id,
@@ -15,10 +16,10 @@ router.post('/createWorkspace/:user_id', (req, res) => {
                     roles: 'admin'
                 };
                 Users_Workspaces.add(userWorkspaceInfo)
-                    .then(userWorskspace => {
+                    .then(userWorkspace => {
                         res.status(201).json({
                             workspace_id: new_workspace.id,
-                            roles: userWorskspace.roles,
+                            roles: userWorkspace.roles,
                             name: new_workspace.name,
                             description: new_workspace.description,
                             created_at: new_workspace.created_at
@@ -31,6 +32,46 @@ router.post('/createWorkspace/:user_id', (req, res) => {
                 res.status(400).json({
                     error: 'Missing user_id'
                 });
+            }
+        })
+        .catch(err => {
+            res.status(500).json({ message: err.message });
+        });
+});
+
+//Delete WS
+router.delete('/:id', (req, res) => {
+    const wsID = req.params.id;
+    Workspaces.remove(wsID)
+        .then(ws => {
+            if (!ws) {
+                res.status(404).json({
+                    message: 'Workspace ID does not exist.'
+                });
+            } else {
+                res.status(200).json({
+                    message: `Successfully deleted ${wsID}`,
+                    wsID: wsID
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).json({ message: err.message });
+        });
+});
+
+//Update WS
+router.put('/:id', (req, res) => {
+    const wsID = req.params.id;
+    const newInfo = req.body;
+    Workspaces.update(wsID, newInfo)
+        .then(ws => {
+            if (!ws) {
+                res.status(404).json({
+                    message: 'Workspace ID does not exist.'
+                });
+            } else {
+                res.status(200).json(ws);
             }
         })
         .catch(err => {
@@ -77,7 +118,8 @@ router.get('userList/:workspaces_id', (req, res) => {
         });
 });
 
-// TODO: update and delete workspace and user's role
+// TODO: update and remove users and user's roles
+// TODO: allow users to leave a WS if they are not the only admin.
 
 //development only
 router.get('/', (req, res) => {

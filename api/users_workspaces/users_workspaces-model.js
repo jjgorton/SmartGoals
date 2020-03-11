@@ -3,6 +3,8 @@ const db = require('../../data/dbConfig');
 module.exports = {
     find,
     add,
+    remove,
+    update,
     listAllUsersOnWorkspace,
     listAllWorkspacesForUser
 };
@@ -50,4 +52,16 @@ function add(userWorkspaceInfo) {
         .then(([id]) => {
             return findById(id, 'users_workspaces');
         });
+}
+
+function remove(id) {
+    return db('users_workspaces')
+        .where('id', id)
+        .del();
+}
+
+function update(id, changes) {
+    return db('users_workspaces')
+        .where({ id })
+        .update(changes);
 }
