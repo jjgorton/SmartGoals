@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const usersRouter = require('./users/users-router');
 const workspacesRouter = require('./workspaces/workspaces-router');
+const goalsRouter = require('./goals/goals-router');
 const authenticate = require('../auth/authenticate');
 
 const server = express();
@@ -14,6 +15,7 @@ server.use(express.json());
 
 server.use('/user', usersRouter);
 server.use('/workspace', authenticate, workspacesRouter);
+server.use('/goals', authenticate, goalsRouter);
 
 server.get('/', (req, res) => {
     res.send(
