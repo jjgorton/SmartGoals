@@ -42,7 +42,7 @@ function listAllWorkspacesForUser(user_id) {
 function listAllUsersOnWorkspace(workspace_id) {
     return db('users_workspaces')
         .join('users', { 'users.id': 'users_workspaces.user_id' })
-        .select('username', 'roles')
+        .select('users.id', 'username', 'roles')
         .where({ workspace_id });
 }
 
