@@ -49,8 +49,8 @@ router.post('/login', (req, res) => {
         });
 });
 
-router.delete('/:id', authenticate, (req, res) => {
-    const userId = req.params.id;
+router.delete('/', authenticate, (req, res) => {
+    const userId = req.decodedJwt.subject;
     Users.remove(userId)
         .then(user => {
             if (!user) {

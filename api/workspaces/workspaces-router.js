@@ -4,7 +4,7 @@ const Workspaces = require('./workspaces-model');
 const Users_Workspaces = require('../users_workspaces/users_workspaces-model');
 const permissions = require('../../auth/permissions');
 
-router.post('/createWorkspace/:user_id', (req, res) => {
+router.post('/createWorkspace', (req, res) => {
     let workspace = req.body;
 
     Workspaces.add(workspace)
@@ -13,7 +13,7 @@ router.post('/createWorkspace/:user_id', (req, res) => {
             if (new_workspace.id) {
                 const userWorkspaceInfo = {
                     workspace_id: new_workspace.id,
-                    user_id: req.params.user_id,
+                    user_id: req.decodedJwt.subject,
                     roles: 'admin'
                 };
                 Users_Workspaces.add(userWorkspaceInfo)
@@ -94,8 +94,8 @@ router.post('/addUser', permissions(['admin']), (req, res) => {
 });
 
 // GET all workspaces for a user with user's roles
-router.get('/workspaceList/:user_id', (req, res) => {
-    const user_id = req.params.user_id;
+router.get('/workspaceList', (req, res) => {
+    const user_id = req.decodedJwt.subject;
 
     Users_Workspaces.listAllWorkspacesForUser(user_id)
         .then(workspaces => {
@@ -123,7 +123,7 @@ router.get(
     }
 );
 
-// TODO: update and remove users and user's roles
+// TODO: remove users and update user's roles
 // TODO: allow users to leave a WS if they are not the only admin.
 
 //development only
