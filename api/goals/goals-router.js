@@ -1,10 +1,10 @@
 const express = require('express');
 const Goals = require('./goals-model');
-const wsAcces = require('../../auth/wsAccess');
+const permissions = require('../../auth/permissions');
 const router = express.Router();
 
 //Create new Goal
-router.post('/', wsAcces(['admin', 'contrib']), (req, res) => {
+router.post('/', permissions(['admin', 'contrib']), (req, res) => {
     const data = req.body;
 
     Goals.add(data)
@@ -18,7 +18,7 @@ router.post('/', wsAcces(['admin', 'contrib']), (req, res) => {
 });
 
 //Get Goals on WS
-router.get('/:id', wsAcces(['admin', 'contrib', 'viewer']), (req, res) => {
+router.get('/:id', permissions(['admin', 'contrib', 'viewer']), (req, res) => {
     const id = req.params.id;
 
     Goals.findByWorkspace(id)

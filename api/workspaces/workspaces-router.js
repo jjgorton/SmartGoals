@@ -2,6 +2,7 @@ const router = require('express').Router();
 
 const Workspaces = require('./workspaces-model');
 const Users_Workspaces = require('../users_workspaces/users_workspaces-model');
+const permissions = require('../../auth/permissions');
 
 router.post('/createWorkspace/:user_id', (req, res) => {
     let workspace = req.body;
@@ -40,7 +41,7 @@ router.post('/createWorkspace/:user_id', (req, res) => {
 });
 
 //Delete WS
-router.delete('/:id', (req, res) => {
+router.delete('/:id', permissions(['admin']), (req, res) => {
     const wsID = req.params.id;
     Workspaces.remove(wsID)
         .then(ws => {
@@ -61,7 +62,7 @@ router.delete('/:id', (req, res) => {
 });
 
 //Update WS
-router.put('/:id', (req, res) => {
+router.put('/:id', permissions(['admin']), (req, res) => {
     const wsID = req.params.id;
     const newInfo = req.body;
     Workspaces.update(wsID, newInfo)
@@ -80,7 +81,7 @@ router.put('/:id', (req, res) => {
 });
 
 //Add user to a Workspace
-router.post('/addUser', (req, res) => {
+router.post('/addUser', permissions(['admin']), (req, res) => {
     const userWorkspaceInfo = req.body;
 
     //TODO check to see if user and workspace exist
@@ -104,19 +105,23 @@ router.get('/workspaceList/:user_id', (req, res) => {
 });
 
 //Get all Users on a Workspace
-router.get('userList/:workspaces_id', (req, res) => {
-    const workspace_id = req.params.workspaces_id;
+router.get(
+    'userList/:workspaces_id',
+    permissions(['admin', 'contrib', 'viewer']),
+    (req, res) => {
+        const workspace_id = req.params.workspaces_id;
 
-    Users_Workspaces.listAllUsersOnWorkspace(workspace_id)
-        .then(usersList => {
-            res.status(200).json({
-                usersList
+        Users_Workspaces.listAllUsersOnWorkspace(workspace_id)
+            .then(usersList => {
+                res.status(200).json({
+                    usersList
+                });
+            })
+            .catch(err => {
+                err.message;
             });
-        })
-        .catch(err => {
-            err.message;
-        });
-});
+    }
+);
 
 // TODO: update and remove users and user's roles
 // TODO: allow users to leave a WS if they are not the only admin.
