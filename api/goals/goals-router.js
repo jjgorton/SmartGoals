@@ -4,7 +4,7 @@ const permissions = require('../../auth/permissions');
 const router = express.Router();
 
 //Create new Goal
-router.post('/', permissions(['admin', 'contrib']), (req, res) => {
+router.post('/', permissions.ws(['admin', 'contrib']), (req, res) => {
     const data = req.body;
 
     Goals.add(data)
@@ -18,15 +18,32 @@ router.post('/', permissions(['admin', 'contrib']), (req, res) => {
 });
 
 //Get Goals on WS
-router.get('/:id', permissions(['admin', 'contrib', 'viewer']), (req, res) => {
-    const id = req.params.id;
+router.get(
+    '/:id',
+    permissions.ws(['admin', 'contrib', 'viewer']),
+    (req, res) => {
+        const id = req.params.id;
 
-    Goals.findByWorkspace(id)
-        .then(goals => res.status(200).json(goals))
-        .catch(err => res.status(500).json({ message: err.message }));
-});
+        Goals.findByWorkspace(id)
+            .then(goals => res.status(200).json(goals))
+            .catch(err => res.status(500).json({ message: err.message }));
+    }
+);
 
 //Update Goal
+router.put('/', permissions.goal(['admin', 'contrib']), (req, res) => {
+    const goalID = req.body.id;
+    const newInfo = req.body;
+    Goals.update(goalID, newInfo)
+        .then(goal => {
+            if (!goal) {
+                res.status(404).json({ message: 'Goal ID does not exist.' });
+            } else {
+                res.status(200).json(goal);
+            }
+        })
+        .catch(err => res.status(500).json({ message: err.message }));
+});
 
 //Delete Goal
 

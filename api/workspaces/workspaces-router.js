@@ -41,7 +41,7 @@ router.post('/createWorkspace', (req, res) => {
 });
 
 //Delete WS
-router.delete('/:id', permissions(['admin']), (req, res) => {
+router.delete('/:id', permissions.ws(['admin']), (req, res) => {
     const wsID = req.params.id;
     Workspaces.remove(wsID)
         .then(ws => {
@@ -62,7 +62,7 @@ router.delete('/:id', permissions(['admin']), (req, res) => {
 });
 
 //Update WS
-router.put('/:id', permissions(['admin']), (req, res) => {
+router.put('/:id', permissions.ws(['admin']), (req, res) => {
     const wsID = req.params.id;
     const newInfo = req.body;
     Workspaces.update(wsID, newInfo)
@@ -81,7 +81,7 @@ router.put('/:id', permissions(['admin']), (req, res) => {
 });
 
 //Add user to a Workspace
-router.post('/addUser', permissions(['admin']), (req, res) => {
+router.post('/addUser', permissions.ws(['admin']), (req, res) => {
     const userWorkspaceInfo = req.body;
 
     //TODO check to see if user and workspace exist
@@ -107,7 +107,7 @@ router.get('/workspaceList', (req, res) => {
 //Get all Users on a Workspace
 router.get(
     'userList/:workspaces_id',
-    permissions(['admin', 'contrib', 'viewer']),
+    permissions.ws(['admin', 'contrib', 'viewer']),
     (req, res) => {
         const workspace_id = req.params.workspaces_id;
 
