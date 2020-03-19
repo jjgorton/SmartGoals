@@ -46,5 +46,24 @@ router.put('/', permissions.goal(['admin', 'contrib']), (req, res) => {
 });
 
 //Delete Goal
+router.delete('/:id', permissions.goal(['admin', 'contrib']), (req, res) => {
+    const goalID = req.params.id;
+    Goals.remove(goalID)
+        .then(goal => {
+            if (!goal) {
+                res.status(404).json({
+                    message: 'Goal ID does not exist.'
+                });
+            } else {
+                res.status(200).json({
+                    message: `Successfully deleted goal ${goalID}`,
+                    goal
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).json({ message: err.message });
+        });
+});
 
 module.exports = router;
