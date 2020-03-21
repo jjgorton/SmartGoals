@@ -57,7 +57,7 @@ router.delete('/:id', permissions.goal(['admin', 'contrib']), (req, res) => {
             } else {
                 res.status(200).json({
                     message: `Successfully deleted goal ${goalID}`,
-                    goal
+                    goalID: goalID
                 });
             }
         })
