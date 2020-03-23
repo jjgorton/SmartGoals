@@ -34,10 +34,11 @@ function findById(id) {
         .first();
 }
 
-function update(id, changes) {
-    return db('goals')
+async function update(id, changes) {
+    await db('goals')
         .where({ id })
         .update(changes);
+    return findById(id);
 }
 
 function remove(id) {
