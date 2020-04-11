@@ -10,14 +10,14 @@ router.post('/register', (req, res) => {
     user.password = hash;
 
     Users.add(user)
-        .then(new_user => {
+        .then((new_user) => {
             const token = tokenService.generateToken(new_user);
             res.status(201).json({
                 message: `${new_user.username} successfully registered!`,
-                token
+                token,
             });
         })
-        .catch(err => {
+        .catch((err) => {
             res.status(500).json({ message: err.message });
         });
 });
@@ -27,7 +27,7 @@ router.post('/login', (req, res) => {
 
     Users.findBy({ username })
         .first()
-        .then(user => {
+        .then((user) => {
             if (user && bcrypt.compareSync(password, user.password)) {
                 const token = tokenService.generateToken(user);
                 res.status(200).json({
@@ -36,15 +36,15 @@ router.post('/login', (req, res) => {
                     username: user.username,
                     email: user.email,
                     created_at: user.created_at,
-                    token
+                    token,
                 });
             } else {
                 res.status(401).json({
-                    message: 'Invalid username or password.'
+                    message: 'Invalid username or password.',
                 });
             }
         })
-        .catch(err => {
+        .catch((err) => {
             res.status(500).json({ message: err.message });
         });
 });
@@ -52,17 +52,31 @@ router.post('/login', (req, res) => {
 router.delete('/', authenticate, (req, res) => {
     const userId = req.decodedJwt.subject;
     Users.remove(userId)
-        .then(user => {
+        .then((user) => {
             if (!user) {
                 res.status(404).json({ message: 'Invalid user ID' });
             } else {
                 res.status(204).end();
             }
         })
-        .catch(err => {
+        .catch((err) => {
             res.status(500).json({
                 error: 'Oops, something went wrong',
-                message: err.message
+                message: err.message,
+            });
+        });
+});
+
+router.get('/', authenticate, (req, res) => {
+    const userId = req.decodedJwt.subject;
+    Users.findById(userId)
+        .then((user) => {
+            res.status(200).json(user);
+        })
+        .catch((err) => {
+            res.status(500).json({
+                error: 'Oops, something went wrong',
+                message: err.message,
             });
         });
 });
@@ -72,8 +86,8 @@ router.delete('/', authenticate, (req, res) => {
 //development only
 router.get('/users-list', (req, res) => {
     Users.find()
-        .then(users => res.status(200).json(users))
-        .catch(err => err.message);
+        .then((users) => res.status(200).json(users))
+        .catch((err) => err.message);
 });
 
 module.exports = router;
