@@ -10,7 +10,7 @@ exports.up = function (knex) {
 
         tbl.integer('est_time'); //seconds?
 
-        tbl.datetime('due');
+        tbl.datetime('due'); //ISO?
 
         tbl.boolean('completed').notNullable().defaultTo(false); //string or 0?
 
@@ -22,9 +22,7 @@ exports.up = function (knex) {
             .onDelete('CASCADE')
             .onUpdate('CASCADE');
 
-        // tbl.timestamp('created_at')
-        //     .notNullable()
-        //     .defaultTo(knex.fn.now());
+        tbl.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
     });
 };
 
