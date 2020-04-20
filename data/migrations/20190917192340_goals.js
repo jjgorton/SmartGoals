@@ -1,5 +1,5 @@
-exports.up = function(knex) {
-    return knex.schema.createTable('goals', tbl => {
+exports.up = function (knex) {
+    return knex.schema.createTable('goals', (tbl) => {
         tbl.increments();
 
         tbl.string('name', 128).notNullable();
@@ -12,9 +12,7 @@ exports.up = function(knex) {
 
         tbl.datetime('due');
 
-        tbl.boolean('completed')
-            .notNullable()
-            .defaultTo(false); //string or 0?
+        tbl.boolean('completed').notNullable().defaultTo(false); //string or 0?
 
         tbl.integer('workspace_id')
             .unsigned()
@@ -24,12 +22,12 @@ exports.up = function(knex) {
             .onDelete('CASCADE')
             .onUpdate('CASCADE');
 
-        tbl.timestamp('created_at')
-            .notNullable()
-            .defaultTo(knex.fn.now());
+        // tbl.timestamp('created_at')
+        //     .notNullable()
+        //     .defaultTo(knex.fn.now());
     });
 };
 
-exports.down = function(knex) {
+exports.down = function (knex) {
     return knex.schema.dropTableIfExists('goals');
 };
