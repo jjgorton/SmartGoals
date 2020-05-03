@@ -3,7 +3,8 @@ const Goals = require('../api/goals/goals-model');
 
 module.exports = {
     ws,
-    goal
+    goal,
+    step,
 };
 
 function ws(role) {
@@ -14,17 +15,17 @@ function ws(role) {
         const wsID = req.params.id || req.body.workspace_id;
 
         Users_Workspaces.listAllUsersOnWorkspace(wsID)
-            .then(usersList => {
-                const access = usersList.find(user => user.id === user_id);
+            .then((usersList) => {
+                const access = usersList.find((user) => user.id === user_id);
                 if (access && role.includes(access.roles)) {
                     next();
                 } else {
                     res.status(403).json({
-                        message: 'Access Denied: User does not have access.'
+                        message: 'Access Denied: User does not have access.',
                     });
                 }
             })
-            .catch(err => {
+            .catch((err) => {
                 res.status(500).json(err.message);
             });
     };
@@ -37,24 +38,56 @@ function goal(role) {
         if (!goalID) {
             res.status(404).json({ message: 'Missing Goal ID' });
         } else {
-            Goals.findById(goalID).then(goal => {
+            Goals.findById(goalID).then((goal) => {
                 const wsID = goal.workspace_id;
 
                 Users_Workspaces.listAllUsersOnWorkspace(wsID)
-                    .then(usersList => {
+                    .then((usersList) => {
                         const access = usersList.find(
-                            user => user.id === user_id
+                            (user) => user.id === user_id
                         );
                         if (access && role.includes(access.roles)) {
                             next();
                         } else {
                             res.status(403).json({
                                 message:
-                                    'Access Denied: User does not have access.'
+                                    'Access Denied: User does not have access.',
                             });
                         }
                     })
-                    .catch(err => {
+                    .catch((err) => {
+                        res.status(500).json(err.message);
+                    });
+            });
+        }
+    };
+}
+
+function step(role) {
+    return (req, res, next) => {
+        const user_id = req.decodedJwt.subject;
+        const goalID = req.params.id || req.body.goal_id;
+        if (!goalID) {
+            res.status(404).json({ message: 'Missing Goal ID' });
+        } else {
+            Goals.findById(goalID).then((goal) => {
+                const wsID = goal.workspace_id;
+
+                Users_Workspaces.listAllUsersOnWorkspace(wsID)
+                    .then((usersList) => {
+                        const access = usersList.find(
+                            (user) => user.id === user_id
+                        );
+                        if (access && role.includes(access.roles)) {
+                            next();
+                        } else {
+                            res.status(403).json({
+                                message:
+                                    'Access Denied: User does not have access.',
+                            });
+                        }
+                    })
+                    .catch((err) => {
                         res.status(500).json(err.message);
                     });
             });
