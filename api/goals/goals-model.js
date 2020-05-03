@@ -7,7 +7,7 @@ module.exports = {
     findById,
     update,
     remove,
-    findByWorkspace
+    findByWorkspace,
 };
 
 function find() {
@@ -22,27 +22,27 @@ function findByWorkspace(id) {
     return db('goals').where({ workspace_id: id });
 }
 
+// function findByWorkspace(id) {
+//     return db('goals')
+//         .join('steps', { 'goals.id': 'steps.goal_id' })
+//         .where('goals.workspace_id', id)
+//         .select('*');
+// }
+
 async function add(info) {
     const [id] = await db('goals').insert(info, 'id');
     return findById(id);
 }
 
 function findById(id) {
-    return db('goals')
-        .select('*')
-        .where({ id })
-        .first();
+    return db('goals').select('*').where({ id }).first();
 }
 
 async function update(id, changes) {
-    await db('goals')
-        .where({ id })
-        .update(changes);
+    await db('goals').where({ id }).update(changes);
     return findById(id);
 }
 
 function remove(id) {
-    return db('goals')
-        .where('id', id)
-        .del();
+    return db('goals').where('id', id).del();
 }

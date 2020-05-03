@@ -1,5 +1,6 @@
 const express = require('express');
 const Goals = require('./goals-model');
+const Steps = require('./steps-model');
 const permissions = require('../../auth/permissions');
 const router = express.Router();
 
@@ -8,25 +9,55 @@ router.post('/', permissions.ws(['admin', 'contrib']), (req, res) => {
     const data = req.body;
 
     Goals.add(data)
-        .then(goal =>
+        .then((goal) =>
             res.status(201).json({
                 message: 'New Goal created',
-                goal
+                goal,
             })
         )
-        .catch(err => res.status(500).json({ message: err.message }));
+        .catch((err) => res.status(500).json({ message: err.message }));
 });
 
-//Get Goals on WS
+//Create new Step
+router.post('/step', permissions.step(['admin', 'contrib']), (req, res) => {
+    const data = req.body;
+
+    Steps.add(data)
+        .then((step) =>
+            res.status(201).json({
+                message: 'New Step added',
+                step,
+            })
+        )
+        .catch((err) => res.status(500).json({ message: err.message }));
+});
+
+//Get Goals on WS and attach corresponding steps to goals
 router.get(
     '/:id',
     permissions.ws(['admin', 'contrib', 'viewer']),
-    (req, res) => {
-        const id = req.params.id;
+    async (req, res) => {
+        try {
+            const id = req.params.id;
+            const goals = await Goals.findByWorkspace(id);
 
-        Goals.findByWorkspace(id)
-            .then(goals => res.status(200).json(goals))
-            .catch(err => res.status(500).json({ message: err.message }));
+            Promise.all(
+                goals.map(async (goal) => {
+                    const steps = await Steps.findByGoal(goal.id);
+                    return { ...goal, steps };
+                })
+            )
+                .then((goalSteps) => res.status(200).json(goalSteps))
+                .catch((err) =>
+                    res.status(500).json({
+                        error: err.message,
+                        message:
+                            'A problem occurred while retrieving your steps.',
+                    })
+                );
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
     }
 );
 
@@ -35,33 +66,33 @@ router.put('/', permissions.goal(['admin', 'contrib']), (req, res) => {
     const goalID = req.body.id;
     const newInfo = req.body;
     Goals.update(goalID, newInfo)
-        .then(goal => {
+        .then((goal) => {
             if (!goal) {
                 res.status(404).json({ message: 'Goal ID does not exist.' });
             } else {
                 res.status(200).json(goal);
             }
         })
-        .catch(err => res.status(500).json({ message: err.message }));
+        .catch((err) => res.status(500).json({ message: err.message }));
 });
 
 //Delete Goal
 router.delete('/:id', permissions.goal(['admin', 'contrib']), (req, res) => {
     const goalID = req.params.id;
     Goals.remove(goalID)
-        .then(goal => {
+        .then((goal) => {
             if (!goal) {
                 res.status(404).json({
-                    message: 'Goal ID does not exist.'
+                    message: 'Goal ID does not exist.',
                 });
             } else {
                 res.status(200).json({
                     message: `Successfully deleted goal ${goalID}`,
-                    goalID: goalID
+                    goalID: goalID,
                 });
             }
         })
-        .catch(err => {
+        .catch((err) => {
             res.status(500).json({ message: err.message });
         });
 });
