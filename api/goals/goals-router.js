@@ -76,6 +76,21 @@ router.put('/', permissions.goal(['admin', 'contrib']), (req, res) => {
         .catch((err) => res.status(500).json({ message: err.message }));
 });
 
+//Update Step
+router.put('/step', permissions.step(['admin', 'contrib']), (req, res) => {
+    const stepID = req.body.id;
+    const newInfo = req.body;
+    Steps.update(stepID, newInfo)
+        .then((step) => {
+            if (!step) {
+                res.status(404).json({ message: 'Step ID does not exist.' });
+            } else {
+                res.status(200).json(step);
+            }
+        })
+        .catch((err) => res.status(500).json({ message: err.message }));
+});
+
 //Delete Goal
 router.delete('/:id', permissions.goal(['admin', 'contrib']), (req, res) => {
     const goalID = req.params.id;
@@ -96,5 +111,32 @@ router.delete('/:id', permissions.goal(['admin', 'contrib']), (req, res) => {
             res.status(500).json({ message: err.message });
         });
 });
+
+//Delete Step
+router.delete(
+    '/:goalID/:id',
+    permissions.step(['admin', 'contrib']),
+    (req, res) => {
+        const stepID = req.params.id;
+        const goalID = req.params.goalID;
+        Steps.remove(stepID)
+            .then((step) => {
+                if (!step) {
+                    res.status(404).json({
+                        message: 'Step ID does not exist.',
+                    });
+                } else {
+                    res.status(200).json({
+                        message: `Successfully deleted step ${stepID} from goal ${goalID}`,
+                        goalID: goalID,
+                        stepID: stepID,
+                    });
+                }
+            })
+            .catch((err) => {
+                res.status(500).json({ message: err.message });
+            });
+    }
+);
 
 module.exports = router;
