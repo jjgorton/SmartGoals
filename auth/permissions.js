@@ -66,7 +66,8 @@ function goal(role) {
 function step(role) {
     return (req, res, next) => {
         const user_id = req.decodedJwt.subject;
-        const goalID = req.params.id || req.body.goal_id;
+        const goalID = req.params.goalID || req.body.goal_id;
+
         if (!goalID) {
             res.status(404).json({ message: 'Missing Goal ID' });
         } else {

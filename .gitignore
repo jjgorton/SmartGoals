@@ -89,3 +89,4 @@ typings/
 
 #database
 *.db3
+*.sqlite3
