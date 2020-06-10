@@ -23,6 +23,7 @@ function findByGoal(id) {
 }
 
 async function add(info) {
+    console.log(info);
     const [id] = await db('steps').insert(info, 'id');
     return findById(id);
 }
