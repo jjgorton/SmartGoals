@@ -8,9 +8,9 @@ exports.up = function (knex) {
 
         tbl.string('category');
 
-        tbl.integer('est_time'); //seconds?
+        tbl.datetime('start_time');
 
-        tbl.datetime('due'); //ISO?
+        tbl.datetime('end_time');
 
         tbl.boolean('completed').notNullable().defaultTo(false); //string or 0?
 

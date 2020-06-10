@@ -9,12 +9,13 @@ router.post('/', permissions.ws(['admin', 'contrib']), (req, res) => {
     const data = req.body;
 
     Goals.add(data)
-        .then((goal) =>
-            res.status(201).json({
+        .then((goal) => {
+            goal.steps = [];
+            return res.status(201).json({
                 message: 'New Goal created',
                 goal,
-            })
-        )
+            });
+        })
         .catch((err) => res.status(500).json({ message: err.message }));
 });
 
@@ -80,6 +81,7 @@ router.put('/', permissions.goal(['admin', 'contrib']), (req, res) => {
 router.put('/step', permissions.step(['admin', 'contrib']), (req, res) => {
     const stepID = req.body.id;
     const newInfo = req.body;
+    console.log(stepID, newInfo);
     Steps.update(stepID, newInfo)
         .then((step) => {
             if (!step) {
