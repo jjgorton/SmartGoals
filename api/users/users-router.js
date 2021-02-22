@@ -5,12 +5,14 @@ const Users = require('./users-model');
 const authenticate = require('../../auth/authenticate');
 
 router.post('/register', (req, res) => {
+    console.log('********inside register: ');
     let user = req.body;
     const hash = bcrypt.hashSync(user.password, 10);
     user.password = hash;
 
     Users.add(user)
         .then((new_user) => {
+            console.log('***********inside.then');
             const token = tokenService.generateToken(new_user);
             res.status(201).json({
                 message: `${new_user.username} successfully registered!`,
