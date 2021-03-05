@@ -5,7 +5,7 @@ module.exports = {
     findBy,
     findById,
     add,
-    remove,
+    remove
 };
 
 function find() {
@@ -17,18 +17,22 @@ function findBy(filter) {
 }
 
 function findById(id) {
-    return db('users').select('*').where({ id }).first();
+    return db('users')
+        .select('*')
+        .where({ id })
+        .first();
 }
 
 async function add(user) {
-    console.log('******users.add');
     const [id] = await db('users').insert(user, 'id');
 
     return findById(id);
 }
 
 function remove(id) {
-    return db('users').where('id', id).del();
+    return db('users')
+        .where('id', id)
+        .del();
 }
 
 // still need to add update
