@@ -85,7 +85,7 @@ router.get('/', authenticate, (req, res) => {
 
 // TODO: UPDATE user info with authenticate middelware!.
 
-// //------------------------------------------------development only
+//------------------------------------------------development only
 // router.get('/users-list', (req, res) => {
 //     Users.find()
 //         .then((users) => res.status(200).json(users))
