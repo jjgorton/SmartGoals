@@ -12,6 +12,7 @@ router.post('/register', (req, res) => {
     Users.add(user)
         .then((new_user) => {
             const token = tokenService.generateToken(new_user);
+            console.log('token:', token);
             res.status(201).json({
                 message: `${new_user.username} successfully registered!`,
                 token,
