@@ -8,6 +8,8 @@ exports.up = function (knex) {
 
         tbl.string('category');
 
+        tbl.integer('rank').notNullable();
+
         tbl.datetime('start_time');
 
         tbl.datetime('end_time');
