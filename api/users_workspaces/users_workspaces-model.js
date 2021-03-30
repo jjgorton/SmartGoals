@@ -6,7 +6,7 @@ module.exports = {
     remove,
     update,
     listAllUsersOnWorkspace,
-    listAllWorkspacesForUser
+    listAllWorkspacesForUser,
 };
 
 function find() {
@@ -14,10 +14,7 @@ function find() {
 }
 
 function findById(id, table) {
-    return db(`${table}`)
-        .select('*')
-        .where({ id })
-        .first();
+    return db(`${table}`).select('*').where({ id }).first();
 }
 
 // function addUser(users_id, workspaces_id) {
@@ -27,14 +24,15 @@ function findById(id, table) {
 function listAllWorkspacesForUser(user_id) {
     return db('users_workspaces')
         .join('workspaces', {
-            'workspaces.id': 'users_workspaces.workspace_id'
+            'workspaces.id': 'users_workspaces.workspace_id',
         })
         .select(
             'users_workspaces.workspace_id',
             'users_workspaces.roles',
             'workspaces.name',
             'workspaces.description',
-            'workspaces.created_at'
+            'workspaces.created_at',
+            'users_workspaces.rank'
         )
         .where({ user_id });
 }
@@ -55,13 +53,9 @@ function add(userWorkspaceInfo) {
 }
 
 function remove(id) {
-    return db('users_workspaces')
-        .where('id', id)
-        .del();
+    return db('users_workspaces').where('id', id).del();
 }
 
 function update(id, changes) {
-    return db('users_workspaces')
-        .where({ id })
-        .update(changes);
+    return db('users_workspaces').where({ id }).update(changes);
 }

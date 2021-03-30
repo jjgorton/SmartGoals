@@ -6,8 +6,6 @@ exports.up = function (knex) {
 
         tbl.text('description');
 
-        tbl.integer('rank').notNullable();
-
         tbl.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
     });
 };
