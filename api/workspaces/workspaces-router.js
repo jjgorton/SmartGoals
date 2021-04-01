@@ -8,34 +8,34 @@ router.post('/createWorkspace', (req, res) => {
     let workspace = req.body;
 
     Workspaces.add(workspace)
-        .then(new_workspace => {
+        .then((new_workspace) => {
             // 'if/else' not needed here - handle higher up or as middleware
             if (new_workspace.id) {
                 const userWorkspaceInfo = {
                     workspace_id: new_workspace.id,
                     user_id: req.decodedJwt.subject,
-                    roles: 'admin'
+                    roles: 'admin',
                 };
                 Users_Workspaces.add(userWorkspaceInfo)
-                    .then(userWorkspace => {
+                    .then((userWorkspace) => {
                         res.status(201).json({
                             workspace_id: new_workspace.id,
                             roles: userWorkspace.roles,
                             name: new_workspace.name,
                             description: new_workspace.description,
-                            created_at: new_workspace.created_at
+                            created_at: new_workspace.created_at,
                         });
                     })
-                    .catch(err =>
+                    .catch((err) =>
                         res.status(500).json({ message: err.message })
                     );
             } else {
                 res.status(400).json({
-                    error: 'Missing user_id'
+                    error: 'Missing user_id',
                 });
             }
         })
-        .catch(err => {
+        .catch((err) => {
             res.status(500).json({ message: err.message });
         });
 });
@@ -44,19 +44,19 @@ router.post('/createWorkspace', (req, res) => {
 router.delete('/:id', permissions.ws(['admin']), (req, res) => {
     const wsID = req.params.id;
     Workspaces.remove(wsID)
-        .then(ws => {
+        .then((ws) => {
             if (!ws) {
                 res.status(404).json({
-                    message: 'Workspace ID does not exist.'
+                    message: 'Workspace ID does not exist.',
                 });
             } else {
                 res.status(200).json({
                     message: `Successfully deleted ${wsID}`,
-                    wsID: wsID
+                    wsID: wsID,
                 });
             }
         })
-        .catch(err => {
+        .catch((err) => {
             res.status(500).json({ message: err.message });
         });
 });
@@ -66,16 +66,16 @@ router.put('/:id', permissions.ws(['admin']), (req, res) => {
     const wsID = req.params.id;
     const newInfo = req.body;
     Workspaces.update(wsID, newInfo)
-        .then(ws => {
+        .then((ws) => {
             if (!ws) {
                 res.status(404).json({
-                    message: 'Workspace ID does not exist.'
+                    message: 'Workspace ID does not exist.',
                 });
             } else {
                 res.status(200).json(ws);
             }
         })
-        .catch(err => {
+        .catch((err) => {
             res.status(500).json({ message: err.message });
         });
 });
@@ -87,10 +87,10 @@ router.post('/addUser', permissions.ws(['admin']), (req, res) => {
     //TODO check to see if user and workspace exist
 
     Users_Workspaces.add(userWorkspaceInfo)
-        .then(userWorskspace => {
+        .then((userWorskspace) => {
             res.status(201).json({ userWorskspace });
         })
-        .catch(err => res.status(500).json({ message: err.message }));
+        .catch((err) => res.status(500).json({ message: err.message }));
 });
 
 // GET all workspaces for a user with user's roles
@@ -98,10 +98,10 @@ router.get('/workspaceList', (req, res) => {
     const user_id = req.decodedJwt.subject;
 
     Users_Workspaces.listAllWorkspacesForUser(user_id)
-        .then(workspaces => {
+        .then((workspaces) => {
             res.status(200).json({ workspaces });
         })
-        .catch(err => res.status(500).json({ message: err.message }));
+        .catch((err) => res.status(500).json({ message: err.message }));
 });
 
 //Get all Users on a Workspace
@@ -112,12 +112,12 @@ router.get(
         const workspace_id = req.params.workspaces_id;
 
         Users_Workspaces.listAllUsersOnWorkspace(workspace_id)
-            .then(usersList => {
+            .then((usersList) => {
                 res.status(200).json({
-                    usersList
+                    usersList,
                 });
             })
-            .catch(err => {
+            .catch((err) => {
                 err.message;
             });
     }
@@ -127,12 +127,12 @@ router.get(
 // TODO: allow users to leave a WS if they are not the only admin.
 
 //development only
-router.get('/', (req, res) => {
-    Workspaces.find()
-        .then(workspaces_list => {
-            res.status(200).json(workspaces_list);
-        })
-        .catch(err => err.message);
-});
+// router.get('/', (req, res) => {
+//     Workspaces.find()
+//         .then((workspaces_list) => {
+//             res.status(200).json(workspaces_list);
+//         })
+//         .catch((err) => err.message);
+// });
 
 module.exports = router;

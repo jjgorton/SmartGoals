@@ -84,10 +84,10 @@ router.get('/', authenticate, (req, res) => {
 // TODO: UPDATE user info with authenticate middelware!.
 
 //development only
-router.get('/users-list', (req, res) => {
-    Users.find()
-        .then((users) => res.status(200).json(users))
-        .catch((err) => err.message);
-});
+// router.get('/users-list', (req, res) => {
+//     Users.find()
+//         .then((users) => res.status(200).json(users))
+//         .catch((err) => err.message);
+// });
 
 module.exports = router;
